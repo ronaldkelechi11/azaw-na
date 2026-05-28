@@ -5,6 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../lib/firebase/config';
 import { useAuthStore } from '../../store/authStore';
+import AnimatedBackground from '../../components/AnimatedBackground';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -23,10 +26,6 @@ export default function RegisterScreen() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const token = await userCredential.user.getIdToken();
-
-      // In a real app, you would also make an API call to your backend here to create the user profile in MongoDB
-      // e.g., await api.post('/users/register', { firebaseUid: userCredential.user.uid, email });
-
       setUser(userCredential.user);
       setToken(token);
       router.replace('/(dashboard)/home');
@@ -38,59 +37,103 @@ export default function RegisterScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1 px-6 justify-center"
-      >
-        <View className="mb-10">
-          <Text className="text-3xl font-extrabold text-text mb-2">Create Account</Text>
-          <Text className="text-textSecondary text-base">Join Azaw Na to get your anonymous link</Text>
-        </View>
-
-        <View className="space-y-4">
-          <View>
-            <Text className="text-text font-semibold mb-2 ml-1">Email</Text>
-            <TextInput
-              className="w-full bg-surface py-4 px-5 rounded-xl text-text"
-              placeholder="Enter your email"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-            />
-          </View>
-
-          <View>
-            <Text className="text-text font-semibold mb-2 ml-1">Password</Text>
-            <TextInput
-              className="w-full bg-surface py-4 px-5 rounded-xl text-text"
-              placeholder="Create a password"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-          </View>
-        </View>
-
-        <TouchableOpacity
-          className="w-full bg-brand py-4 rounded-xl items-center mt-8 flex-row justify-center shadow-sm"
-          onPress={handleRegister}
-          disabled={loading}
+    <View className="flex-1 bg-background">
+      <AnimatedBackground />
+      
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          className="flex-1 px-8"
         >
-          {loading ? (
-            <ActivityIndicator color="white" className="mr-2" />
-          ) : null}
-          <Text className="text-white font-bold text-lg">Sign Up</Text>
-        </TouchableOpacity>
+          <Animated.View 
+            entering={FadeIn.delay(200)}
+            className="mt-8 mb-12"
+          >
+            <TouchableOpacity 
+              onPress={() => router.back()}
+              className="w-12 h-12 bg-surface/50 rounded-full items-center justify-center border border-text/10 mb-8"
+            >
+              <Ionicons name="arrow-back" size={24} color="#f8fafc" />
+            </TouchableOpacity>
+            
+            <Text className="text-4xl font-black text-text mb-2 tracking-tight">New Shadow</Text>
+            <Text className="text-textSecondary text-lg font-medium">Create your untraceable presence.</Text>
+          </Animated.View>
 
-        <View className="flex-row justify-center mt-8">
-          <Text className="text-textSecondary">Already have an account? </Text>
-          <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-            <Text className="text-brand font-bold">Login</Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          <Animated.View 
+            entering={FadeInDown.delay(400)}
+            className="space-y-6"
+          >
+            <View className="space-y-2">
+              <Text className="text-textSecondary font-bold uppercase tracking-widest text-xs ml-1">Secure Email</Text>
+              <View className="relative">
+                <View className="absolute left-4 top-4 z-10">
+                  <Ionicons name="mail-outline" size={20} color="#94a3b8" />
+                </View>
+                <TextInput
+                  className="w-full bg-surface/50 border border-text/10 py-5 pl-12 pr-5 rounded-2xl text-text font-medium"
+                  placeholder="alias@shadow.com"
+                  placeholderTextColor="#475569"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
+            </View>
+
+            <View className="space-y-2">
+              <Text className="text-textSecondary font-bold uppercase tracking-widest text-xs ml-1">Private Cipher</Text>
+              <View className="relative">
+                <View className="absolute left-4 top-4 z-10">
+                  <Ionicons name="lock-closed-outline" size={20} color="#94a3b8" />
+                </View>
+                <TextInput
+                  className="w-full bg-surface/50 border border-text/10 py-5 pl-12 pr-5 rounded-2xl text-text font-medium"
+                  placeholder="Min. 8 characters"
+                  placeholderTextColor="#475569"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+              </View>
+            </View>
+            
+            <Text className="text-textSecondary/60 text-xs px-2 italic">
+              By initializing, you agree to the shadow protocols. Your data is encrypted and anonymous.
+            </Text>
+          </Animated.View>
+
+          <Animated.View entering={FadeInDown.delay(600)}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              className="w-full bg-brand py-5 rounded-2xl items-center mt-10 flex-row justify-center shadow-lg shadow-brand/20"
+              onPress={handleRegister}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#0a0a0a" className="mr-3" />
+              ) : (
+                <Ionicons name="person-add-outline" size={24} color="#0a0a0a" className="mr-2" />
+              )}
+              <Text className="text-background font-black text-xl">Create Identity</Text>
+            </TouchableOpacity>
+
+            <View className="flex-row justify-center mt-10 items-center">
+              <View className="h-[1px] flex-1 bg-text/10" />
+              <Text className="text-textSecondary px-4 font-medium">Known Entity?</Text>
+              <View className="h-[1px] flex-1 bg-text/10" />
+            </View>
+            
+            <TouchableOpacity 
+              className="mt-6 py-4 items-center"
+              onPress={() => router.push('/(auth)/login')}
+            >
+              <Text className="text-text font-bold text-lg">Identity Verification</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }

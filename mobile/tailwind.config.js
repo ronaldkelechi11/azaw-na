@@ -5,14 +5,19 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          light: '#d9f99d', // Lime green 200
-          DEFAULT: '#84cc16', // Lime green 500
-          dark: '#4d7c0f', // Lime green 700
+          light: '#bef264', // Lime 300
+          DEFAULT: '#a3e635', // Lime 400
+          dark: '#65a30d', // Lime 600
         },
-        background: '#ffffff',
-        surface: '#f3f4f6', // Gray 100
-        text: '#111827', // Gray 900
-        textSecondary: '#6b7280', // Gray 500
+        background: '#0a0a0a',
+        surface: '#171717',
+        accent: '#8b5cf6', // Violet 500
+        text: '#f8fafc',
+        textSecondary: '#94a3b8',
+      },
+      borderRadius: {
+        '3xl': '24px',
+        '4xl': '32px',
       }
     },
   },
